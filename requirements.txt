@@ -1,0 +1,15 @@
+django
+django-tinymce
+fontawesomefree
+django-crispy-forms
+django-recaptcha
+pillow
+six
+psycopg2-binary
+gunicorn
+ocrspace
+bs4
+requests
+wget
+uuid
+PyMuPDF
