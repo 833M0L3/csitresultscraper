@@ -1,0 +1,22 @@
+{% extends "result/base.xhtml" %}
+{% block title %}Indreni CSIT 077 Result Scraper{% endblock %}
+{% block content %}
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1">Scraped Datas</span>
+    <span class="badge bg-success">Last updated {{update.time}}</span>
+  </div>
+</nav>
+  
+  {% for post in posts %}
+  <div class="alert alert-primary" role="alert">
+    <h2>
+      <a href="{% url 'result:post_detail' post.key %}">
+        {{ post.name }}
+      </a>
+    </h2>
+    <span class="badge bg-primary">Scraped on {{post.date}}</span>
+  </div>
+   
+  {% endfor %}
+{% endblock %}
