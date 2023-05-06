@@ -69,7 +69,7 @@ def convert(file):
     doc.close()
 
 def extract():
-    api = ocrspace.API(endpoint='https://api.ocr.space/parse/image', api_key='K87043301788957', language=ocrspace.Language.English)
+    api = ocrspace.API(endpoint='https://api.ocr.space/parse/image', api_key='XXXXXXXXXXXXXXXXXX', language=ocrspace.Language.English)
 
     result= api.ocr_file(TEST_FILENAME)
 
