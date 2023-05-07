@@ -10,14 +10,15 @@ from uuid import uuid4
 import datetime
 from pathlib import Path
 
-
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent
+
 
 db_path = BASE_DIR / 'db.sqlite3'
 
-
 con = sqlite3.connect(db_path)
 c = con.cursor()
+pages = [6,7,8,9]
 
 TEST_FILENAME = 'image.png'
 content1 = requests.get("https://www.tuiost.edu.np/result").text
@@ -41,8 +42,11 @@ def scrapper():
             else:
                now = datetime.datetime.now()
                wget.download(pdf_link, "downloads/{}.pdf".format(file))
-               convert(file)
-               passer(file)
+
+               for page1 in pages:
+                   
+                convert(file,page1)
+                passer(file)
                c.execute('INSERT INTO result_downloads (key, name, date, link) VALUES (?, ?, ?,?)', (file,pdf_title,now.strftime('%Y-%m-%d %H:%M:%S'),pdf_link))
                con.commit()
 
@@ -50,26 +54,32 @@ def scrapper():
       now = datetime.datetime.now()
       id = uuid4().hex
       c.execute('UPDATE result_update SET id=?, time=? WHERE rowid=(SELECT rowid FROM result_update LIMIT 1)', (id, now.strftime('%Y-%m-%d %H:%M:%S')))
+
       con.commit()
       con.close()
 
 
             
 
-def convert(file):
+def convert(file,page1):
     pdffile = "downloads/{}.pdf".format(file)
     doc = fitz.open(pdffile)
     zoom = 1.2
     mat = fitz.Matrix(zoom, zoom)
 
     val = TEST_FILENAME
-    page = doc.load_page(7)
+    try:
+        page = doc.load_page(page1)
+    except ValueError:
+        print("Error: Page number out of range.")
+        doc.close()
+        return
     pix = page.get_pixmap(matrix=mat)
     pix.save(val)
     doc.close()
 
 def extract():
-    api = ocrspace.API(endpoint='https://api.ocr.space/parse/image', api_key='XXXXXXXXXXXXXXXXXX', language=ocrspace.Language.English)
+    api = ocrspace.API(endpoint='https://api.ocr.space/parse/image', api_key='K87043301788957', language=ocrspace.Language.English)
 
     result= api.ocr_file(TEST_FILENAME)
 
