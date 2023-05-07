@@ -19,6 +19,7 @@ db_path = BASE_DIR / 'db.sqlite3'
 con = sqlite3.connect(db_path)
 c = con.cursor()
 pages = [6,7,8,9]
+size = 1.2
 
 TEST_FILENAME = 'image.png'
 content1 = requests.get("https://www.tuiost.edu.np/result").text
@@ -45,8 +46,8 @@ def scrapper():
 
                for page1 in pages:
                    
-                convert(file,page1)
-                passer(file)
+                convert(file,page1,size)
+                passer(file,page1)
                c.execute('INSERT INTO result_downloads (key, name, date, link) VALUES (?, ?, ?,?)', (file,pdf_title,now.strftime('%Y-%m-%d %H:%M:%S'),pdf_link))
                con.commit()
 
@@ -61,10 +62,10 @@ def scrapper():
 
             
 
-def convert(file,page1):
+def convert(file,page1,size):
     pdffile = "downloads/{}.pdf".format(file)
     doc = fitz.open(pdffile)
-    zoom = 1.2
+    zoom = size
     mat = fitz.Matrix(zoom, zoom)
 
     val = TEST_FILENAME
@@ -120,10 +121,20 @@ def database():
    con.close() 
 
 
-def passer(file):
+def passer(file,page1):
    
-   symbol_numbers = extract()
+   try:
+    symbol_numbers = extract()
+   except Exception as e:
+      if 'File failed validation. File size exceeds the maximum permissible file size limit of 1024 KB' in str(e):
+         print("\nFile size is too big , compressing more")
+         size = 1.1
+         convert(file,page1,size)
+         symbol_numbers = extract()
+      else:
+        print("Error:", e)
 
+   
    for t in symbol_numbers:
       today = datetime.date.today()
       id = uuid4().hex
