@@ -1,15 +1,15 @@
 {% extends "result/base.xhtml" %}
 {% block title %}Indreni CSIT 077 Result Scraper{% endblock %}
 {% block content %}
+{% load static %}
 <nav class="navbar navbar-dark bg-dark">
   <div class="container-fluid">
-    <span class="navbar-brand mb-0 h1">Scraped Datas</span>
+    <span class="navbar-brand mb-0 h1"> <i class="bi bi-robot"> Scraped Data</i></span>
     <span class="badge bg-success">Last updated {{update.time}}</span>
   </div>
 </nav>
   
   {% for post in posts reversed%}
-   {% if forloop.counter <= 4 %}
   <div class="card">
     <div class="card-body">
       <h5 class="card-title">{{ post.name }}</h5>
@@ -17,10 +17,14 @@
       <a href="{% url 'result:post_detail' post.key %}" class="btn btn-primary">View data</a>
     </div>
   </div>
-   {% endif %}
   {% endfor %}
-  <div class="alert alert-success" role="alert">
-    <h4 class="alert-heading">About this site</h4>
-    <p>A Python script checks the IOST's result page for the CSIT result post every 5 minutes and updates the result data in the database so that it can be viewed nicely on this site. The green badge in the top-right corner of the navbar indicates the time when the script was last run.</p>
+  <div class="card text-center">
+    <div class="card-body">
+      <img src="{% static "images/test.png" %}" alt="miku" width="50" height="50">
+      <h5 class="card-title">About this site</h5>
+      <p class="card-text">A python script checks IOST's result page for CSIT result post in every 5 minutes interval and updates the result data in the database, so that it can be viewed on this site nicely. The top right green badge in the nav bar gives the time of last time when the script was ran.</p>
+      <a href="https://github.com/833M0L3/csitresultscraper" class="btn btn-outline-success">View Code</a>
+    </div>
   </div>
+  {% include "pagination.xhtml" with page=posts %}
 {% endblock %}
